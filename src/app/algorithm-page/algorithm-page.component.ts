@@ -25,6 +25,10 @@ export class AlgorithmPageComponent implements OnInit {
 
   algorithm = new FormControl('');
 
+  min = 1;
+  max = 100;
+  numLength = 3;
+
   returnText = "Click start to run the program below!";
 
   formatLabel(value: number) {
@@ -43,7 +47,7 @@ export class AlgorithmPageComponent implements OnInit {
   executeFunction(): void {
     console.log(this.algorithm.value);
     if (!this.pause) {
-      var algorithmData = this.exeService.getExecutionFlow(this.algorithm.value);
+      var algorithmData = this.exeService.getExecutionFlow(this.algorithm.value, this.min, this.max, this.numLength);
       this.commandList = algorithmData[0];
       this.commandMap = algorithmData[1];
     } else {

@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HungarianService } from './hungarian/hungarian.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,18 +18,26 @@ export class ExecutionService {
         4: "i was equal to 5, so the program entered this block of code.",
         5: "i (%i%) wasn't equal to 5, so the program skipped the if block of code.",
         6: "Done!"
+    },
+    "hungarian": {
+
     }
   }
 
   commandList = [];
 
-  constructor() { }
+  constructor(public hunService: HungarianService) { }
 
-  getExecutionFlow(algorithm: string): any[] {
+  getExecutionFlow(algorithm: string, min: number, max: number,numLength: number): any[] {
+    if(algorithm == "hungarian") {
+      return [this.hungarianFunction(min, max, numLength), this.commandMap[algorithm]];
+    }
+
     return [this.functionMap[algorithm](), this.commandMap[algorithm]];
   }
 
   simpleFunction(): any[] {
+    console.log(this);
     this.commandList = [];
     this.commandList.push(1);
     for (let i=1; i<8; i++) {
@@ -43,6 +52,13 @@ export class ExecutionService {
       }
     }
     this.commandList.push(6);
+    return this.commandList;
+  }
+
+  hungarianFunction(min: number, max: number,numLength: number): any[] {
+    console.log(this);
+    console.log(this.commandList);
+    this.commandList = this.hunService.hungarian(1, 100, 3);
     return this.commandList;
   }
 
