@@ -15,6 +15,7 @@ export class HungarianService {
   rowCovered: boolean[] = [];
   colCovered: boolean[] = [];
   results = [];
+  commandList = [];
   
   steps = {
       1: this.step1,
@@ -27,16 +28,28 @@ export class HungarianService {
 
 
   hungarian(min: number, max: number,numLength: number): any[] {
-    let commandList = [];
+    this.commandList = [];
     this.n = numLength;
     this.originalMatrix = this.randomMatrix(min, max, numLength);
     this.m = this.originalMatrix.map(function(arr) {
         return arr.slice();
     });
 
+    this.commandList.push(1);
+
     let step = 1;
 
-    console.log(this.originalMatrix);
+    // let steps = {
+    //   1: this.step1(commandList),
+    //   2: this.step2(commandList),
+    //   3: this.step3(commandList),
+    //   4: this.step4(commandList),
+    //   5: this.step5(commandList),
+    //   6: 'Done'
+    // };
+
+    console.log("---- Target Matrix ----");
+    console.log(this.formatMatrix(this.originalMatrix));
 
     while (true) {
       let func = this.steps[step];
@@ -46,19 +59,28 @@ export class HungarianService {
       }
 
       console.log("Step" + step);
+
       step = func.apply(this);
-      console.log(this.m);
+
+      console.log("---- Transition Matrix ----");
+      console.log(this.formatMatrix(this.m));
   
     }
 
-    console.log(this.originalMatrix);
-    return commandList;
+    console.log("---- Target Matrix ----");
+    console.log(this.formatMatrix(this.originalMatrix));
+
+    return this.commandList;
   }
 
   step1(): number {
     console.log('Subtract the smallest entry in each row from all the other entries in the row.\n');
 
+    this.commandList.push(2);
+
     this.subStractMinValue(this.m);
+
+    this.commandList.push(3);
 
     return 2;
 
@@ -67,9 +89,14 @@ export class HungarianService {
   step2(): number {
     console.log('Subtract the smallest entry in each column from all the other entries in the column.\n');
 
+    this.commandList.push(4);
+
     let transMatrix = this.transpose(this.m);
 
     this.m = this.transpose(this.subStractMinValue(transMatrix));
+
+    this.commandList.push(5);
+    this.commandList.push(6);
 
     return 3;
 
@@ -115,6 +142,8 @@ export class HungarianService {
         }
     }
 
+    this.commandList.push(7);
+
     if (count >= this.n) {
         return 5;
     }
@@ -128,6 +157,8 @@ export class HungarianService {
     
     let min = this.findSmallest(this.m);
 
+    this.commandList.push(8);
+
     for (let i=0; i<this.n; i++) {
         for (let j=0; j<this.n; j++) {
             if (this.rowCovered[i] && this.colCovered[j]) {
@@ -138,6 +169,9 @@ export class HungarianService {
             }
         }
     }
+
+    this.commandList.push(9);
+    this.commandList.push(10);
 
     return 3;
 
@@ -194,6 +228,7 @@ export class HungarianService {
 
     }
 
+    this.commandList.push(11);
     return 6;
 
   }
@@ -320,5 +355,37 @@ export class HungarianService {
     return min;
 
   }
+
+  formatMatrix(matrix: number[][]): string {
+    let columnWidths = [];
+
+    for (let i = 0; i < matrix.length; ++i) {
+        for (let j = 0; j < matrix[i].length; ++j) {
+            let entryWidth = String(matrix[i][j]).length;
+            if (!columnWidths[j] || entryWidth >= columnWidths[j])
+                columnWidths[j] = entryWidth;
+        }
+    }
+
+    let formatted = '';
+
+    for (let i = 0; i < matrix.length; ++i) {
+        for (let j = 0; j < matrix[i].length; ++j) {
+            let s = String(matrix[i][j]);
+            // pad at front with spaces
+            while (s.length < columnWidths[j])
+                s = ' ' + s;
+            formatted += s;
+            // separate columns
+            if (j != matrix[i].length - 1)
+                formatted += ' ';
+        }
+        if (i != matrix[i].length - 1)
+            formatted += '\n';
+    }
+
+    return formatted;
+
+}
 
 }

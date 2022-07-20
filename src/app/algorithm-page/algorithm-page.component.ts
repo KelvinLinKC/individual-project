@@ -29,6 +29,12 @@ export class AlgorithmPageComponent implements OnInit {
   max = 100;
   numLength = 3;
 
+  matrix: any[][];
+
+  originalMatrix: any[][];
+
+  resultMatrix: any[][];
+
   returnText = "Click start to run the program below!";
 
   formatLabel(value: number) {
@@ -44,6 +50,20 @@ export class AlgorithmPageComponent implements OnInit {
     return value;
   }
 
+  changeAlgorithm() {
+    this.commandList = [];
+    this.commandMap = new Map<number, string>();
+    this.commandListCounter = 0;
+
+    this.currentLine = 0;
+    this.timeInBetween = 50;
+    this.pause = false;
+
+    this.numLength = 3;
+
+    this.returnText = "Click start to run the program below!";
+  }
+
   executeFunction(): void {
     console.log(this.algorithm.value);
     if (!this.pause) {
@@ -53,6 +73,10 @@ export class AlgorithmPageComponent implements OnInit {
     } else {
       this.pause = false;
     }
+
+    this.matrix = this.exeService.getMatrixTable();
+    this.originalMatrix = this.exeService.getOriginalMatrixTable();
+    this.resultMatrix = this.exeService.getResultMatrixTable();
 
     this.play();
   }
@@ -83,6 +107,17 @@ export class AlgorithmPageComponent implements OnInit {
 
     }
 
+  }
+
+  restart() {
+    this.pause = true;
+    let a = document.getElementById("line" + this.currentLine);
+    a.style.color = "";
+    this.commandListCounter = 0;
+    this.currentLine = 1;
+    this.returnText = this.commandMap["1"];
+    a = document.getElementById("line" + this.currentLine);
+    a.style.color = "#37FF00";
   }
 
   pauseExecution() {

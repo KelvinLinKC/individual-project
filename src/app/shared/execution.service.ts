@@ -6,21 +6,27 @@ import { HungarianService } from './hungarian/hungarian.service';
 })
 export class ExecutionService {
 
-  functionMap = {
-    "simple": this.simpleFunction
-  }
-
   commandMap = {
     "simple": {
-        1: "Start a loop for 7 times and increment i on each loop",
-        2: "Print i (%i%) to console.",
-        3: "Checking if i (%i%) is equal to 5.",
-        4: "i was equal to 5, so the program entered this block of code.",
-        5: "i (%i%) wasn't equal to 5, so the program skipped the if block of code.",
-        6: "Done!"
+      1: "Start a loop for 7 times and increment i on each loop",
+      2: "Print i (%i%) to console.",
+      3: "Checking if i (%i%) is equal to 5.",
+      4: "i was equal to 5, so the program entered this block of code.",
+      5: "i (%i%) wasn't equal to 5, so the program skipped the if block of code.",
+      6: "Done!"
     },
     "hungarian": {
-
+      1: "line 1",
+      2: "line 2",
+      3: "line 3",
+      4: "line 4",
+      5: "line 5",
+      6: "line 6",
+      7: "line 7",
+      8: "line 8",
+      9: "line 9",
+      10: "line 10",
+      11: "line 11"
     }
   }
 
@@ -33,7 +39,19 @@ export class ExecutionService {
       return [this.hungarianFunction(min, max, numLength), this.commandMap[algorithm]];
     }
 
-    return [this.functionMap[algorithm](), this.commandMap[algorithm]];
+    return [this.simpleFunction(), this.commandMap[algorithm]];
+  }
+
+  getMatrixTable(): any[][] {
+    return this.hunService.m;
+  }
+
+  getOriginalMatrixTable(): any[][] {
+    return this.hunService.originalMatrix;
+  }
+
+  getResultMatrixTable(): any[][] {
+    return this.hunService.results;
   }
 
   simpleFunction(): any[] {
