@@ -314,7 +314,7 @@
   <div class="content" role="main">
   
     <!-- Highlight Card -->
-    <div class="card highlight-card card-small">
+    <div class="card highlight-card card-small" style="height: 50px;">
   
       <svg id="rocket" alt="Rocket Ship" xmlns="http://www.w3.org/2000/svg" width="101.678" height="101.678" viewBox="0 0 101.678 101.678">
         <g id="Group_83" data-name="Group 83" transform="translate(-141 -696)">
@@ -338,19 +338,12 @@
           <mat-option value="hungarian">Hungarian algorithm</mat-option>
         </mat-select>
       </mat-form-field>
-
-      <p>Speed</p>
-
-      <mat-slider
-      thumbLabel
-      [displayWith]="formatLabel"
-      [(ngModel)]="this.timeInBetween"
-      tickInterval="1000"
-      min="50"
-      max="3000"></mat-slider>
       
-      <p *ngIf="!(this.algorithm.value == '')">Time in-between steps: {{ this.timeInBetween }}ms</p>
-  
+      <!-- <p *ngIf="!(this.algorithm.value == '')">Time in-between steps: {{ this.timeInBetween }}ms</p> -->
+
+    <p class="mt-2" *ngIf="!(this.algorithm.value == '')">Step Number: {{ this.commandListCounter }}</p>
+    <p class="mb-2" *ngIf="!(this.algorithm.value == '')">Line Number: {{ this.currentLine }}</p>  
+
     <div class="terminal">
       <pre *ngIf="this.algorithm.value == ''">
             <code id="line1">Select an algorithm in the dropdown menu to start!</code>
@@ -392,34 +385,62 @@
       <div>{{ this.originalMatrix[0][2] }}</div><div>{{ this.originalMatrix[1][2] }}</div><div>{{ this.originalMatrix[2][2] }}</div>
     </div>
     
-    <div class="container">
-      <div class="row justify-content-center">
-        <button style="margin-top: 20px; cursor: pointer" class="github-star-badge" (click)=executeFunction() *ngIf="!(this.algorithm.value == '')">
-          Play
-        </button>
+    <div>
 
-        <button style="margin-top: 20px; cursor: pointer" class="github-star-badge" (click)=restart() [disabled]="!this.pause" *ngIf="this.currentLine != 0">
-          Restart
-        </button>
-
-        <button style="margin-top: 20px; cursor: pointer" class="github-star-badge" (click)=pauseExecution() *ngIf="this.currentLine != 0">
-          Pause
-        </button>
-
-        <button style="margin-top: 20px; cursor: pointer" class="github-star-badge" (click)=backStep() [disabled]="!this.pause" *ngIf="this.currentLine != 0">
-          Step Back
-        </button>
-
-        <button style="margin-top: 20px; cursor: pointer" class="github-star-badge" (click)=forwardStep() [disabled]="!this.pause" *ngIf="this.currentLine != 0">
-          Step Forward
-        </button>
+      <div class="container" *ngIf="!(this.algorithm.value == '')">
+        <div class="row justify-content-center">
+          <span style="padding-top: 4px" class="mt-2 mr-2">Slow</span>
+            <mat-slider
+            #timeSlider
+            thumbLabel
+            [displayWith]="formatLabel"
+            tickInterval="1000"
+            min="50"
+            max="3000"
+            value="2500"
+            (input)="this.updateSpeed(timeSlider.value)"></mat-slider>
+            <span style="padding-top: 4px" class="mt-2 ml-2">Fast</span>
+        </div>
       </div>
+
+      <div class="container" *ngIf="!(this.algorithm.value == '')">
+        <div class="row justify-content-center">
+      
+          <!-- <button style="margin-top: 20px; cursor: pointer" class="github-star-badge" (click)=restart() [disabled]="!this.pause" *ngIf="this.currentLine != 0">
+            Restart
+          </button> -->
+  
+          <mat-icon style="cursor: pointer;" class="playbackButton unselectable mr-2" aria-hidden="false" aria-label="Example home icon" (click)=restart()>skip_previous</mat-icon>
+  
+          <mat-icon style="cursor: pointer;" class="playbackButton unselectable mr-2" aria-hidden="false" aria-label="Example home icon" (click)=backStep()>fast_rewind</mat-icon>
+        
+          <mat-animated-icon class="playbackButton unselectable" start="play_arrow" end="pause" colorStart="none" colorEnd="none" [animate]="animate" (click)="this.toggle()"></mat-animated-icon>
+  
+          <mat-icon style="cursor: pointer;" class="playbackButton unselectable ml-2" aria-hidden="false" aria-label="Example home icon" (click)=forwardStep()>fast_forward</mat-icon>
+  
+          <mat-icon style="cursor: pointer;" class="playbackButton unselectable ml-2" aria-hidden="false" aria-label="Example home icon" (click)="goToEnd()">skip_next</mat-icon>
+        
+        </div>
+      </div>
+
+      <div *ngIf="!(this.firstRun)">
+        <span style="padding-top: 4px" class="mt-2 mr-2">{{ this.commandListCounter }}</span>
+        <mat-slider style="width: 600px"
+        #slider
+        thumbLabel
+        [displayWith]="formatLabel"
+        [(ngModel)]="this.commandListCounter"
+        (input)="this.formatSteps(slider.value)"
+        tickInterval="1"
+        min="0"
+        max={{this.numCommands}}></mat-slider>
+        <span style="padding-top: 4px" class="mt-2 ml-2">{{ this.numCommands }}</span>
+                <!-- <p style="text-align: center;">
+          {{ this.commandListCounter }} / {{ this.numCommands }}
+        </p> -->
+      </div>
+
     </div>
-
-    <br>
-
-    <p *ngIf="!(this.algorithm.value == '')">Step Number: {{ this.commandListCounter }}</p>
-    <p *ngIf="!(this.algorithm.value == '')">Line Number: {{ this.currentLine }}</p>
   
   
     <svg id="clouds" alt="Gray Clouds Background" xmlns="http://www.w3.org/2000/svg" width="2611.084" height="485.677" viewBox="0 0 2611.084 485.677">
