@@ -31,17 +31,38 @@ export class AlgorithmPageComponent implements OnInit {
 
   min = 1;
   max = 100;
-  numLength = 3;
+  numLength: number;
 
-  matrix: any[][];
+  matrix: any[];
 
   originalMatrix: any[][];
 
   resultMatrix: any[][];
 
-  returnText = "Click start to run the program below!";
+  returnText = "Click play to run the program below!";
 
   animate = false;
+
+  changeAlgorithm() {
+    this.commandList = [];
+    this.commandMap = new Map<number, string>();
+    this.commandListCounter = 0;
+
+    this.currentLine = 0;
+    this.timeInBetween = 500;
+    this.pause = false;
+
+    this.numLength = 3;
+
+    this.matrix = null;
+    this.originalMatrix = null;
+    this.resultMatrix = null;
+
+    this.firstRun = true;
+    this.toggleAnimatePlay();
+
+    this.returnText = "Click play to run the program below!";
+  }
 
   toggleAnimateStop(){
     this.animate = true;
@@ -60,7 +81,7 @@ export class AlgorithmPageComponent implements OnInit {
       this.firstRun = false;
 
       if(this.algorithm.value == "hungarian") {
-        this.matrix = this.exeService.getMatrixTable();
+        this.matrix = this.exeService.getMonitorMatrixTable();
         this.originalMatrix = this.exeService.getOriginalMatrixTable();
         this.resultMatrix = this.exeService.getResultMatrixTable();
       }
@@ -119,27 +140,6 @@ export class AlgorithmPageComponent implements OnInit {
 
   }
 
-  changeAlgorithm() {
-    this.commandList = [];
-    this.commandMap = new Map<number, string>();
-    this.commandListCounter = 0;
-
-    this.currentLine = 0;
-    this.timeInBetween = 500;
-    this.pause = false;
-
-    this.numLength = 3;
-
-    this.matrix = null;
-    this.originalMatrix = null;
-    this.resultMatrix = null;
-
-    this.firstRun = true;
-    this.toggleAnimatePlay();
-
-    this.returnText = "Click start to run the program below!";
-  }
-
   executeFunction(): void {
     console.log(this.algorithm.value);
     if (!this.pause) {
@@ -151,7 +151,7 @@ export class AlgorithmPageComponent implements OnInit {
     }
 
       if(this.algorithm.value == "hungarian") {
-        this.matrix = this.exeService.getMatrixTable();
+        this.matrix = this.exeService.getMonitorMatrixTable();
         this.originalMatrix = this.exeService.getOriginalMatrixTable();
         this.resultMatrix = this.exeService.getResultMatrixTable();
       }

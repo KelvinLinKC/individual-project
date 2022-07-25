@@ -16,17 +16,17 @@ export class ExecutionService {
       6: "Done!"
     },
     "hungarian": {
-      1: "line 1",
-      2: "line 2",
-      3: "line 3",
-      4: "line 4",
-      5: "line 5",
-      6: "line 6",
-      7: "line 7",
-      8: "line 8",
-      9: "line 9",
-      10: "line 10",
-      11: "line 11"
+      1: "Start the algorithm with a created matrix.",
+      2: "Find the smallest entry in each row, nRow = [%i%].",
+      3: "Subtract nRow = [%i%] in each row from all the other entries in the row.",
+      4: "Find the smallest entry in each column, nCol = [%i%].",
+      5: "Subtract nCol = [%i%] in each row from all the other entries in the column.",
+      6: "The minimal number of zeroes covered lines l = %i% in row %j% and column %k%.",
+      7: "The l = %i% and n = %j%, check entry loop condition l < n",
+      8: "The smallest uncovered entry s = %i%.",
+      9: "Subtract s = %i% from all uncovered numbers and add to all cross-covered numbers.",
+      10: "The minimal number of zeroes covered lines l = %i% in row = %j% and column = %k%.",
+      11: "An optimal assignment is found and the result = %i%."
     }
   }
 
@@ -42,8 +42,8 @@ export class ExecutionService {
     return [this.simpleFunction(), this.commandMap[algorithm]];
   }
 
-  getMatrixTable(): any[][] {
-    return this.hunService.m;
+  getMonitorMatrixTable(): any[] {
+    return this.hunService.matrixSet;
   }
 
   getOriginalMatrixTable(): any[][] {

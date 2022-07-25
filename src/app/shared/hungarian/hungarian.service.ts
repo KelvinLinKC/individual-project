@@ -9,6 +9,7 @@ export class HungarianService {
   
   originalMatrix: number[][];
   m: number[][];
+  matrixSet = [];
 
   maxSize: number = Number.MAX_SAFE_INTEGER;
   n: number;
@@ -16,6 +17,7 @@ export class HungarianService {
   colCovered: boolean[] = [];
   results = [];
   commandList = [];
+  firstloop = true;
   
   steps = {
       1: this.step1,
@@ -36,6 +38,9 @@ export class HungarianService {
     });
 
     this.commandList.push(1);
+    this.matrixSet.push(this.m.map(function(arr) {
+        return arr.slice();
+    }));
 
     let step = 1;
 
@@ -76,11 +81,23 @@ export class HungarianService {
   step1(): number {
     console.log('Subtract the smallest entry in each row from all the other entries in the row.\n');
 
-    this.commandList.push(2);
+    let minNumber = [];
+
+    for(let i=0; i<this.n; i++) {
+        minNumber.push(this.getMinOfArray(this.m[i]));
+    }
+
+    this.commandList.push({2: {"%i%": minNumber}});
+    this.matrixSet.push(this.m.map(function(arr) {
+        return arr.slice();
+    }));
 
     this.subStractMinValue(this.m);
 
-    this.commandList.push(3);
+    this.commandList.push({3: {"%i%": minNumber}});
+    this.matrixSet.push(this.m.map(function(arr) {
+        return arr.slice();
+    }));
 
     return 2;
 
@@ -89,14 +106,25 @@ export class HungarianService {
   step2(): number {
     console.log('Subtract the smallest entry in each column from all the other entries in the column.\n');
 
-    this.commandList.push(4);
+    let minNumber = [];
 
     let transMatrix = this.transpose(this.m);
 
+    for(let i=0; i<this.n; i++) {
+        minNumber.push(this.getMinOfArray(transMatrix[i]));
+    }
+
+    this.commandList.push({4: {"%i%": minNumber}});
+    this.matrixSet.push(this.m.map(function(arr) {
+        return arr.slice();
+    }));
+
     this.m = this.transpose(this.subStractMinValue(transMatrix));
 
-    this.commandList.push(5);
-    this.commandList.push(6);
+    this.commandList.push({5: {"%i%": minNumber}});
+    this.matrixSet.push(this.m.map(function(arr) {
+        return arr.slice();
+    }));
 
     return 3;
 
@@ -142,7 +170,33 @@ export class HungarianService {
         }
     }
 
-    this.commandList.push(7);
+    let rowCoveredLine = [];
+    let colCoveredLine = [];
+
+    for(let i=0; i<this.n; i++) {
+        if(this.rowCovered[i] == true) {
+            rowCoveredLine.push(i+1);
+        }
+        if(this.colCovered[i] == true) {
+            colCoveredLine.push(i+1);
+        }
+    }
+
+    if(this.firstloop) {
+        this.commandList.push({6: {"%i%": count, "%j%": rowCoveredLine, "%k%": colCoveredLine}});
+        this.firstloop = false;
+    } else {
+        this.commandList.push({10: {"%i%": count, "%j%": rowCoveredLine, "%k%": colCoveredLine}});
+    }
+
+    this.matrixSet.push(this.m.map(function(arr) {
+        return arr.slice();
+    }));
+
+    this.commandList.push({7: {"%i%": count, "%j%": this.n}});
+    this.matrixSet.push(this.m.map(function(arr) {
+        return arr.slice();
+    }));
 
     if (count >= this.n) {
         return 5;
@@ -157,7 +211,10 @@ export class HungarianService {
     
     let min = this.findSmallest(this.m);
 
-    this.commandList.push(8);
+    this.commandList.push({8: {"%i%": min}});
+    this.matrixSet.push(this.m.map(function(arr) {
+        return arr.slice();
+    }));
 
     for (let i=0; i<this.n; i++) {
         for (let j=0; j<this.n; j++) {
@@ -170,8 +227,10 @@ export class HungarianService {
         }
     }
 
-    this.commandList.push(9);
-    this.commandList.push(10);
+    this.commandList.push({9: {"%i%": min}});
+    this.matrixSet.push(this.m.map(function(arr) {
+        return arr.slice();
+    }));
 
     return 3;
 
@@ -228,7 +287,14 @@ export class HungarianService {
 
     }
 
-    this.commandList.push(11);
+    let result = this.formatResult(this.results);
+    console.log(result);
+
+    this.commandList.push({11: {"%i%": result}});
+    this.matrixSet.push(this.m.map(function(arr) {
+        return arr.slice();
+    }));
+
     return 6;
 
   }
@@ -386,6 +452,17 @@ export class HungarianService {
 
     return formatted;
 
-}
+  }
+
+  formatResult(matrix: number[][]): string {
+    let formatted = '';
+
+    for (let i=0; i<matrix.length; i++) {
+        let s = String(matrix[i]);
+        formatted = formatted + '[' + s + '], ';
+    }
+
+    return formatted;
+  }
 
 }
