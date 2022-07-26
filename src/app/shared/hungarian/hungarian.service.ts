@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
+import { Hungarian } from './hungarian.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HungarianService {
 
-  constructor() { }
-  
   originalMatrix: number[][];
   m: number[][];
   matrixSet = [];
@@ -16,7 +15,26 @@ export class HungarianService {
   rowCovered: boolean[] = [];
   colCovered: boolean[] = [];
   results = [];
-  commandList = [];
+//   commandList = [];
+  commandList = {
+    commands: []
+  };
+
+  commandMap = {
+    1: "Start the algorithm with a created matrix.",
+    2: "Find the smallest entry in each row, nRow = [%i%].",
+    3: "Subtract nRow = [%i%] in each row from all the other entries in the row.",
+    4: "Find the smallest entry in each column, nCol = [%i%].",
+    5: "Subtract nCol = [%i%] in each row from all the other entries in the column.",
+    6: "The minimal number of zeroes covered lines l = %i% in row %j% and column %k%.",
+    7: "The l = %i% and n = %j%, check entry loop condition l < n",
+    8: "The smallest uncovered entry s = %i%.",
+    9: "Subtract s = %i% from all uncovered numbers and add to all cross-covered numbers.",
+    10: "The minimal number of zeroes covered lines l = %i% in row = %j% and column = %k%.",
+    11: "An optimal assignment is found and the result = %i%."
+  };
+
+
   firstloop = true;
   
   steps = {
@@ -28,16 +46,46 @@ export class HungarianService {
       6: 'Done'
   };
 
+  constructor() { }
 
-  hungarian(min: number, max: number,numLength: number): any[] {
-    this.commandList = [];
+  initialise(): void {
+    this.results = [];
+    this.rowCovered = [];
+    this.colCovered = [];
+    this.matrixSet = [];
+    this.n = 0;
+    this.originalMatrix = [];
+    this.m = [];
+    this.commandList = {
+      commands: []
+    };
+  }
+
+  update(step: number, stepVariables?: Object): void {
+    let hungarian: Hungarian = {
+    //   matrix: Object.assign([], this.m.map( function(arr) { return arr.slice(); })),
+    //   row: Object.assign([], this.rowCovered),
+    //   col: Object.assign([], this.colCovered),
+      lineNumber: step,
+      stepVariables: stepVariables
+    }
+    console.log(hungarian);
+    this.commandList.commands.push(hungarian);
+  }
+
+  run(min: number, max: number,numLength: number): Object {
+
+    this.initialise();
+
+    // this.commandList = [];
     this.n = numLength;
     this.originalMatrix = this.randomMatrix(min, max, numLength);
     this.m = this.originalMatrix.map(function(arr) {
         return arr.slice();
     });
 
-    this.commandList.push(1);
+    // this.commandList.push(1);
+    this.update(1);
     this.matrixSet.push(this.m.map(function(arr) {
         return arr.slice();
     }));
@@ -87,14 +135,16 @@ export class HungarianService {
         minNumber.push(this.getMinOfArray(this.m[i]));
     }
 
-    this.commandList.push({2: {"%i%": minNumber}});
+    // this.commandList.push({2: {"%i%": minNumber}});
+    this.update(2, {"%i%": minNumber});
     this.matrixSet.push(this.m.map(function(arr) {
         return arr.slice();
     }));
 
     this.subStractMinValue(this.m);
 
-    this.commandList.push({3: {"%i%": minNumber}});
+    // this.commandList.push({3: {"%i%": minNumber}});
+    this.update(3, {"%i%": minNumber});
     this.matrixSet.push(this.m.map(function(arr) {
         return arr.slice();
     }));
@@ -114,14 +164,16 @@ export class HungarianService {
         minNumber.push(this.getMinOfArray(transMatrix[i]));
     }
 
-    this.commandList.push({4: {"%i%": minNumber}});
+    // this.commandList.push({4: {"%i%": minNumber}});
+    this.update(4, {"%i%": minNumber});
     this.matrixSet.push(this.m.map(function(arr) {
         return arr.slice();
     }));
 
     this.m = this.transpose(this.subStractMinValue(transMatrix));
 
-    this.commandList.push({5: {"%i%": minNumber}});
+    // this.commandList.push({5: {"%i%": minNumber}});
+    this.update(5, {"%i%": minNumber});
     this.matrixSet.push(this.m.map(function(arr) {
         return arr.slice();
     }));
@@ -183,17 +235,20 @@ export class HungarianService {
     }
 
     if(this.firstloop) {
-        this.commandList.push({6: {"%i%": count, "%j%": rowCoveredLine, "%k%": colCoveredLine}});
+        // this.commandList.push({6: {"%i%": count, "%j%": rowCoveredLine, "%k%": colCoveredLine}});
+        this.update(6, {"%i%": count, "%j%": rowCoveredLine, "%k%": colCoveredLine});
         this.firstloop = false;
     } else {
-        this.commandList.push({10: {"%i%": count, "%j%": rowCoveredLine, "%k%": colCoveredLine}});
+        // this.commandList.push({10: {"%i%": count, "%j%": rowCoveredLine, "%k%": colCoveredLine}});
+        this.update(10, {"%i%": count, "%j%": rowCoveredLine, "%k%": colCoveredLine});
     }
 
     this.matrixSet.push(this.m.map(function(arr) {
         return arr.slice();
     }));
 
-    this.commandList.push({7: {"%i%": count, "%j%": this.n}});
+    // this.commandList.push({7: {"%i%": count, "%j%": this.n}});
+    this.update(7, {"%i%": count, "%j%": this.n});
     this.matrixSet.push(this.m.map(function(arr) {
         return arr.slice();
     }));
@@ -211,7 +266,8 @@ export class HungarianService {
     
     let min = this.findSmallest(this.m);
 
-    this.commandList.push({8: {"%i%": min}});
+    // this.commandList.push({8: {"%i%": min}});
+    this.update(8, {"%i%": min});
     this.matrixSet.push(this.m.map(function(arr) {
         return arr.slice();
     }));
@@ -227,7 +283,8 @@ export class HungarianService {
         }
     }
 
-    this.commandList.push({9: {"%i%": min}});
+    // this.commandList.push({9: {"%i%": min}});
+    this.update(9, {"%i%": min});
     this.matrixSet.push(this.m.map(function(arr) {
         return arr.slice();
     }));
@@ -290,7 +347,8 @@ export class HungarianService {
     let result = this.formatResult(this.results);
     console.log(result);
 
-    this.commandList.push({11: {"%i%": result}});
+    // this.commandList.push({11: {"%i%": result}});
+    this.update(11, {"%i%": result});
     this.matrixSet.push(this.m.map(function(arr) {
         return arr.slice();
     }));
