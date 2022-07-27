@@ -36,6 +36,8 @@ export class AlgorithmPageComponent implements OnInit {
   numLength: number;
 
   matrix: any[];
+  row: any[];
+  col: any[];
 
   originalMatrix: any[][];
 
@@ -58,9 +60,11 @@ export class AlgorithmPageComponent implements OnInit {
 
     this.numLength = 3;
 
-    this.matrix = null;
+    this.matrix = [];
     this.originalMatrix = null;
     this.resultMatrix = null;
+    this.row = [];
+    this.col = [];
 
     this.firstRun = true;
     this.toggleAnimatePlay();
@@ -82,14 +86,12 @@ export class AlgorithmPageComponent implements OnInit {
       this.algorithmData = algorithmData;
       this.commandList = algorithmData["commands"];
       this.descriptions = algorithmData["descriptions"];
+      this.originalMatrix = algorithmData["originalMatrix"];
+      this.resultMatrix = algorithmData["results"];
       this.numCommands = this.commandList.length - 1;
       this.firstRun = false;
 
-      if(this.algorithm.value == "hungarian") {
-        this.matrix = this.exeService.getMonitorMatrixTable();
-        this.originalMatrix = this.exeService.getOriginalMatrixTable();
-        this.resultMatrix = this.exeService.getResultMatrixTable();
-      }
+      this.getStepData();
 
       this.play()
     } else {
@@ -139,25 +141,6 @@ export class AlgorithmPageComponent implements OnInit {
 
   }
 
-  // executeFunction(): void {
-  //   console.log(this.algorithm.value);
-  //   if (!this.pause) {
-  //     var algorithmData = this.exeService.getExecutionFlow(this.algorithm.value, this.min, this.max, this.numLength);
-  //     this.commandList = algorithmData[0];
-  //     this.commandMap = algorithmData[1];
-  //   } else {
-  //     this.pause = false;
-  //   }
-
-  //     if(this.algorithm.value == "hungarian") {
-  //       this.matrix = this.exeService.getMonitorMatrixTable();
-  //       this.originalMatrix = this.exeService.getOriginalMatrixTable();
-  //       this.resultMatrix = this.exeService.getResultMatrixTable();
-  //     }
-
-  //   this.play();
-  // }
-
   async play(): Promise<void> {
     
     while (this.commandListCounter < this.commandList.length) {
@@ -182,7 +165,7 @@ export class AlgorithmPageComponent implements OnInit {
           this.commandListCounter++;
         } else {
           // this.toggleAnimateStop();
-          console.log(this.animate);
+          // console.log(this.animate);
           this.pause = true;
         }
       }
@@ -265,5 +248,15 @@ export class AlgorithmPageComponent implements OnInit {
   async sleep(msec: number) {
     return new Promise(resolve => setTimeout(resolve, msec));
   }
+
+  getStepData(): void {
+    for(let command of this.commandList) {
+      this.matrix.push(command["matrix"]);
+      this.row.push(command["row"]);
+      this.col.push(command["col"]);
+    }
+
+  }
+  
 
 }

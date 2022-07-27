@@ -31,17 +31,17 @@ export class ExecutionService {
     return commandList;
   }
 
-  getMonitorMatrixTable(): any[] {
-    return this.hunService.matrixSet;
-  }
+  // getMonitorMatrixTable(): any[] {
+  //   return this.hunService.matrixSet;
+  // }
 
-  getOriginalMatrixTable(): any[][] {
-    return this.hunService.originalMatrix;
-  }
+  // getOriginalMatrixTable(): any[][] {
+  //   return this.hunService.originalMatrix;
+  // }
 
-  getResultMatrixTable(): any[][] {
-    return this.hunService.results;
-  }
+  // getResultMatrixTable(): any[][] {
+  //   return this.hunService.results;
+  // }
 
   // simpleFunction(): Object {
   //   let commandList = [];

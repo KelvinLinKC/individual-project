@@ -44,13 +44,14 @@
 
     .divTable
     {
-      -webkit-columns: 1px 3;
+      /* -webkit-columns: 1px 3;
       -moz-columns: 1px 3;
-      columns: 1px 3;
+      columns: 1px 3; */
       color: black;
       text-align: center;
       float:left;
-      width: 100px;
+      width: 120px;
+      height: 75px;
       border: 5px solid black;
       margin: 10px;
     }
@@ -128,19 +129,23 @@
 
       <p style="height:50px" class="mt-2" *ngIf="!(this.algorithm.value == '')">{{ this.returnText }}</p>
 
-      <div class="container" *ngIf="!(this.algorithm.value == '')">
+      <div class="container" *ngIf="!(this.algorithm.value == '') && this.matrix.length != 0">
         <div class="row justify-content-center">
-          <p class="mt-2" *ngIf="this.matrix != null">Monitor matrix</p>
-          <div class='divTable' *ngIf="this.matrix != null">
-            <div>{{ this.matrix[this.commandListCounter][0][0] }}</div><div>{{ this.matrix[this.commandListCounter][1][0] }}</div><div>{{ this.matrix[this.commandListCounter][2][0] }}</div>
-            <div>{{ this.matrix[this.commandListCounter][0][1] }}</div><div>{{ this.matrix[this.commandListCounter][1][1] }}</div><div>{{ this.matrix[this.commandListCounter][2][1] }}</div>
-            <div>{{ this.matrix[this.commandListCounter][0][2] }}</div><div>{{ this.matrix[this.commandListCounter][1][2] }}</div><div>{{ this.matrix[this.commandListCounter][2][2] }}</div>
+          <p class="mt-2">Monitor matrix</p>
+          <div class="divTable">
+            <div class = "row" *ngFor="let row of this.matrix[this.commandListCounter]">
+              <div class = "col" *ngFor="let col of row">
+                <div class = "number"> {{ col }} </div>
+              </div>
+            </div>
           </div>
-          <p class="mt-2" *ngIf="this.originalMatrix != null">Target matrix</p>
-          <div class='divTable' *ngIf="this.originalMatrix != null">
-            <div>{{ this.originalMatrix[0][0] }}</div><div>{{ this.originalMatrix[1][0] }}</div><div>{{ this.originalMatrix[2][0] }}</div>
-            <div>{{ this.originalMatrix[0][1] }}</div><div>{{ this.originalMatrix[1][1] }}</div><div>{{ this.originalMatrix[2][1] }}</div>
-            <div>{{ this.originalMatrix[0][2] }}</div><div>{{ this.originalMatrix[1][2] }}</div><div>{{ this.originalMatrix[2][2] }}</div>
+          <p class="mt-2">Target matrix</p>
+          <div class="divTable">
+            <div class = "row" *ngFor="let row of this.originalMatrix">
+              <div class = "col" *ngFor="let col of row">
+                <div class = "number"> {{ col }} </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
