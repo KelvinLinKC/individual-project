@@ -3,5 +3,6 @@ export interface Hungarian {
     row: boolean[];
     col: boolean[];
     lineNumber: number;
+    highlight: string[];
     stepVariables: Object;
 }

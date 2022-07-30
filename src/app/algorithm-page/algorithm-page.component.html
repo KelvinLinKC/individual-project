@@ -50,11 +50,22 @@
       color: black;
       text-align: center;
       float:left;
-      width: 120px;
-      height: 75px;
+      /* width: 120px; */
+      /* height: 75px; */
       border: 5px solid black;
       margin: 10px;
     }
+
+    .m0 {
+      margin-right: 0px;
+      margin-left: 0px;
+    }
+
+    .m1 {
+      padding-right: 5px;
+      padding-left: 5px;
+    }
+    
   
 </style>
 
@@ -129,21 +140,25 @@
 
       <p style="height:50px" class="mt-2" *ngIf="!(this.algorithm.value == '')">{{ this.returnText }}</p>
 
-      <div class="container" *ngIf="!(this.algorithm.value == '') && this.matrix.length != 0">
-        <div class="row justify-content-center">
-          <p class="mt-2">Monitor matrix</p>
-          <div class="divTable">
-            <div class = "row" *ngFor="let row of this.matrix[this.commandListCounter]">
-              <div class = "col" *ngFor="let col of row">
-                <div class = "number"> {{ col }} </div>
+      <div class="container" *ngIf="(this.algorithm.value == 'hungarian') && (this.matrix.length != 0)">
+        <div class="row justify-content-around">
+          <div class="col-0">
+            <p>Monitor matrix</p>
+            <div class="divTable">
+              <div class = "m0 row r{{i}}" *ngFor="let row of this.matrix[this.commandListCounter]; let i = index">
+                <div class = "m1 col c{{j}}" *ngFor="let col of row; let j = index">
+                  <div class = "number{{i}}{{j}}"> {{ col }} </div>
+                </div>
               </div>
             </div>
           </div>
-          <p class="mt-2">Target matrix</p>
-          <div class="divTable">
-            <div class = "row" *ngFor="let row of this.originalMatrix">
-              <div class = "col" *ngFor="let col of row">
-                <div class = "number"> {{ col }} </div>
+          <div class="col-0">
+            <p>Target matrix</p>
+            <div class="divTable">
+              <div class = "m0 row r{{i}}" *ngFor="let row of this.originalMatrix; let i = index">
+                <div class = "m1 col c{{j}}" *ngFor="let col of row; let j = index">
+                  <div class = "number{{i}}{{j}}"> {{ col }} </div>
+                </div>
               </div>
             </div>
           </div>

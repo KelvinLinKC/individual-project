@@ -33,7 +33,7 @@ export class AlgorithmPageComponent implements OnInit {
 
   min = 1;
   max = 100;
-  numLength: number;
+  numLength = 3;
 
   matrix: any[];
   row: any[];
@@ -42,6 +42,9 @@ export class AlgorithmPageComponent implements OnInit {
   originalMatrix: any[][];
 
   resultMatrix: any[][];
+
+  selectedNumber: any[];
+  selectedLine: any[];
 
   descriptions = [];
 
@@ -65,6 +68,9 @@ export class AlgorithmPageComponent implements OnInit {
     this.resultMatrix = null;
     this.row = [];
     this.col = [];
+
+    this.selectedLine = [];
+    this.selectedNumber = []; 
 
     this.firstRun = true;
     this.toggleAnimatePlay();
@@ -137,6 +143,7 @@ export class AlgorithmPageComponent implements OnInit {
     let a = document.getElementById("line" + command["lineNumber"]);
     a.style.color = "";
 
+    this.highlightVariables();
     this.colorLine();
 
   }
@@ -170,6 +177,10 @@ export class AlgorithmPageComponent implements OnInit {
         }
       }
 
+      if (this.algorithm.value == "hungarian") {
+        this.highlightVariables();
+      }
+
     }
 
   }
@@ -178,6 +189,7 @@ export class AlgorithmPageComponent implements OnInit {
     this.pause = true;
     let a = document.getElementById("line" + this.currentLine);
     a.style.color = "";
+    this.clearHighlight();
     this.commandListCounter = 0;
     this.currentLine = 1;
     this.returnText = this.descriptions[0];
@@ -200,6 +212,7 @@ export class AlgorithmPageComponent implements OnInit {
     this.currentLine = command["lineNumber"];
     a = document.getElementById("line" + this.currentLine);
     a.style.color = "#37FF00";
+    this.highlightVariables();
     this.toggleAnimatePlay();
   }
 
@@ -218,6 +231,7 @@ export class AlgorithmPageComponent implements OnInit {
       this.commandListCounter--;
     }
 
+    this.highlightVariables();
     this.colorLine();
 
   }
@@ -231,6 +245,7 @@ export class AlgorithmPageComponent implements OnInit {
       this.commandListCounter++;
     }
 
+    this.highlightVariables();
     this.colorLine();
 
   }
@@ -255,6 +270,70 @@ export class AlgorithmPageComponent implements OnInit {
       this.row.push(command["row"]);
       this.col.push(command["col"]);
     }
+    console.log(this.commandList);
+  }
+
+  async highlightVariables(): Promise<void> {
+
+    this.clearHighlight();
+
+    await this.sleep(1);
+
+    var command = this.commandList[this.commandListCounter];
+    let highlightNumber = command["highlight"];
+    let highlightRow = command["row"];
+    let highlightCol = command["col"];
+
+    for (let number of highlightNumber) {
+      let a = document.getElementsByClassName("number" + number);
+      for (let i = 0; i < a.length; i++) {
+        a[i].setAttribute("style", "font-weight: bold; color: red;");
+      }
+      this.selectedNumber.push(number);
+    }
+
+    for (let i=0; i<this.numLength; i++) {
+      if(highlightRow[i]) {
+        let className = "r" + i.toString();
+        let a = document.getElementsByClassName(className);
+        for (let i = 0; i < a.length; i++) {
+          a[i].setAttribute("style", "background-color: lightblue;");
+        }
+        this.selectedLine.push(className);
+      }
+
+      if(highlightCol[i]) {
+        let className = "c" + i.toString();
+        let a = document.getElementsByClassName(className);
+        for (let i = 0; i < a.length; i++) {
+          a[i].setAttribute("style", "background-color: lightgreen;");
+        }
+        this.selectedLine.push(className);
+      }
+
+    }
+
+  }
+
+  clearHighlight(): void {
+
+    for (let number of this.selectedNumber) {
+      let a = document.getElementsByClassName("number" + number);
+      for (let i = 0; i < a.length; i++) {
+        a[i].setAttribute("style", "font-weight: normal; color: ;");
+      }
+    }
+
+    this.selectedNumber = [];
+
+    for (let line of this.selectedLine) {
+      let a = document.getElementsByClassName(line);
+      for (let i = 0; i < a.length; i++) {
+        a[i].setAttribute("style", "background-color: ;");
+      }
+    }
+
+    this.selectedLine = [];
 
   }
   
