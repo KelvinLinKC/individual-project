@@ -1,7 +1,7 @@
-// import { trimTrailingNulls } from '@angular/compiler/src/render3/view/util';
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { ExecutionService } from '../shared/execution.service';
+import { ExecutionService } from './services/execution/execution.service';
+import { PlaybackService } from './services/playback/playback.service';
 
 @Component({
   selector: 'app-algorithm-page',
@@ -10,24 +10,24 @@ import { ExecutionService } from '../shared/execution.service';
 })
 export class AlgorithmPageComponent implements OnInit {
 
-  constructor(public exeService: ExecutionService) { }
+  constructor(public exeService: ExecutionService, public playback: PlaybackService) { }
 
   ngOnInit(): void {
   }
 
-  algorithmData;
+  // algorithmData;
 
-  firstRun: boolean = true;
+  // firstRun: boolean = true;
 
-  commandList: any[] = [];
+  // commandList: any[] = [];
 
-  commandListCounter: number = 0;
-  numCommands: number = 0;
+  // commandListCounter: number = 0;
+  // numCommands: number = 0;
 
-  currentLine: number = 0;
-  timeInBetween: number = 500;
-  pause: Boolean = false;
-  prevStep: number = 0;
+  // currentLine: number = 0;
+  // timeInBetween: number = 500;
+  // pause: Boolean = false;
+  // prevStep: number = 0;
 
   algorithm = new FormControl('');
 
@@ -35,79 +35,83 @@ export class AlgorithmPageComponent implements OnInit {
   max = 100;
   numLength = 3;
 
-  matrix: any[];
-  row: any[];
-  col: any[];
+  // matrix: any[];
+  // row: any[];
+  // col: any[];
 
-  originalMatrix: any[][];
+  // selectedNumber: any[];
+  // selectedLine: any[];
 
-  resultMatrix: any[][];
+  // descriptions = [];
 
-  selectedNumber: any[];
-  selectedLine: any[];
+  // returnText = "Click play to run the program below!";
 
-  descriptions = [];
-
-  returnText = "Click play to run the program below!";
-
-  animate = false;
+  // animate = false;
 
   changeAlgorithm() {
-    this.commandList = [];
+    this.playback.firstRun = true;
+    this.playback.resetPlaybackData();
+    // this.commandList = [];
 
-    this.commandListCounter = 0;
+    // this.commandListCounter = 0;
 
-    this.currentLine = 0;
-    // this.timeInBetween = 500;
-    this.pause = false;
+    // this.currentLine = 0;
+    
+    // this.pause = false;
 
     this.numLength = 3;
 
-    this.matrix = [];
-    this.originalMatrix = null;
-    this.resultMatrix = null;
-    this.row = [];
-    this.col = [];
+    // this.matrix = [];
+    // this.row = [];
+    // this.col = [];
 
-    this.selectedLine = [];
-    this.selectedNumber = []; 
+    // this.selectedLine = [];
+    // this.selectedNumber = []; 
 
-    this.firstRun = true;
-    this.toggleAnimatePlay();
+    // this.firstRun = true;
+    // this.animate = true;
 
-    this.returnText = "Click play to run the program below!";
-  }
-
-  toggleAnimateStop(){
-    this.animate = true;
-  }
-
-  toggleAnimatePlay(){
-    this.animate = false;
+    // this.returnText = "Click play to run the program below!";
   }
 
   toggle() {
-    if (this.firstRun) {
-      var algorithmData = this.exeService.getExecutionFlow(this.algorithm.value, this.min, this.max, this.numLength);
-      this.algorithmData = algorithmData;
-      this.commandList = algorithmData["commands"];
-      this.descriptions = algorithmData["descriptions"];
-      this.originalMatrix = algorithmData["originalMatrix"];
-      this.resultMatrix = algorithmData["results"];
-      this.numCommands = this.commandList.length - 1;
-      this.firstRun = false;
-
-      this.getStepData();
-
-      this.play()
+    if (this.playback.firstRun) {
+      this.playback.setAlgorithm(this.algorithm.value, this.min, this.max, this.numLength);
+      this.playback.firstRun = false;
+      this.playback.pause = false;
+      // this.getStepData();
+      this.playback.play();
     } else {
-      if (this.pause) {
-        this.pause = false;
-        this.play()
+      if (this.playback.pause) {
+        this.playback.pause = false;
+        this.playback.play();
       } else {
-        this.pauseExecution();
+        this.playback.pause = true;
       }
     }
+
+    // if (this.firstRun) {
+    //   this.playback.setAlgorithm(this.algorithm.value, this.min, this.max, this.numLength);
+    //   var algorithmData = this.exeService.getExecutionFlow(this.algorithm.value, this.min, this.max, this.numLength);
+    //   this.algorithmData = algorithmData;
+    //   this.commandList = algorithmData["commands"];
+    //   this.descriptions = algorithmData["descriptions"];
+    //   this.originalMatrix = algorithmData["originalMatrix"];
+    //   this.resultMatrix = algorithmData["results"];
+    //   this.numCommands = this.commandList.length - 1;
+    //   this.firstRun = false;
+
+    //   this.getStepData();
+
+    //   this.playback.play();
+    // } else {
+    //   if (this.playback.pause) {
+    //     this.playback.pause = false;
+    //     this.playback.play();
+    //   } else {
+    //     this.pauseExecution();
+    //   }
+    // }
   }
 
   formatLabel(value: number) {
@@ -124,218 +128,212 @@ export class AlgorithmPageComponent implements OnInit {
   }
 
   updateSpeed(val: number): void {
-    this.timeInBetween = 3050 - val;
+    this.playback.speed = 3050 - val;
   }
 
   formatSteps(val: number) {
-    if (this.prevStep != this.commandListCounter) {
-      this.prevStep = this.commandListCounter;
-      this.pause = true;
+    if (this.playback.previousStepCounter != this.playback.stepCounter) {
+      this.playback.previousStepCounter = this.playback.stepCounter;
     }
 
-    this.commandListCounter = val;
+    this.playback.pause = true;
+
+    this.playback.stepCounter = val;
 
 
-    var command = this.commandList[this.prevStep];
-
-    this.returnText = this.descriptions[this.commandListCounter];
-
+    var command = this.playback.commandList[this.playback.previousStepCounter];
     let a = document.getElementById("line" + command["lineNumber"]);
     a.style.color = "";
 
-    this.highlightVariables();
-    this.colorLine();
+    this.playback.updateCurrentCommand();
+    // this.highlightVariables();
+    this.playback.colourCurrentLine();
 
   }
 
-  async play(): Promise<void> {
+  // async play(): Promise<void> {
     
-    while (this.commandListCounter < this.commandList.length) {
+  //   while (this.commandListCounter < this.commandList.length) {
 
-      if (this.pause) {
-        console.log("Paused at step " + (this.commandListCounter+1) + "!");
-        console.log("Current Line: " + this.currentLine);
-        this.toggleAnimatePlay();
-        break;
-      }
+  //     if (this.pause) {
+  //       console.log("Paused at step " + (this.commandListCounter+1) + "!");
+  //       console.log("Current Line: " + this.currentLine);
+  //       this.toggleAnimatePlay();
+  //       break;
+  //     }
 
-      this.toggleAnimateStop();
+  //     this.toggleAnimateStop();
 
-      this.colorLine();
+  //     this.colorLine();
 
-      await this.sleep(this.timeInBetween);
+  //     await this.sleep(this.timeInBetween);
 
-      if (!this.pause) {
-        if (!(this.commandListCounter >= this.commandList.length - 1)) {
-          let a = document.getElementById("line" + this.currentLine);
-          a.style.color = "";
-          this.commandListCounter++;
-        } else {
-          // this.toggleAnimateStop();
-          // console.log(this.animate);
-          this.pause = true;
-        }
-      }
+  //     if (!this.pause) {
+  //       if (!(this.commandListCounter >= this.commandList.length - 1)) {
+  //         let a = document.getElementById("line" + this.currentLine);
+  //         a.style.color = "";
+  //         this.commandListCounter++;
+  //       } else {
+  //         // this.toggleAnimateStop();
+  //         // console.log(this.animate);
+  //         this.pause = true;
+  //       }
+  //     }
 
-      if (this.algorithm.value == "hungarian") {
-        this.highlightVariables();
-      }
+  //     if (this.algorithm.value == "hungarian") {
+  //       this.highlightVariables();
+  //     }
 
-    }
+  //   }
 
-  }
+  // }
 
-  restart() {
-    this.pause = true;
-    let a = document.getElementById("line" + this.currentLine);
-    a.style.color = "";
-    this.clearHighlight();
-    this.commandListCounter = 0;
-    this.currentLine = 1;
-    this.returnText = this.descriptions[0];
-    a = document.getElementById("line" + this.currentLine);
-    a.style.color = "#37FF00";
-    this.toggleAnimatePlay();
-  }
+  // restart() {
+  //   this.playback.restart();
+    // this.pause = true;
+    // let a = document.getElementById("line" + this.currentLine);
+    // a.style.color = "";
+    // this.clearHighlight();
+    // this.commandListCounter = 0;
+    // this.currentLine = 1;
+    // this.returnText = this.descriptions[0];
+    // a = document.getElementById("line" + this.currentLine);
+    // a.style.color = "#37FF00";
+  // }
 
-  goToEnd() {
-    this.pause = true;
-    let a = document.getElementById("line" + this.currentLine);
-    a.style.color = "";
-    this.commandListCounter = this.numCommands;
+  // goToEnd() {
+  //   this.playback.goToEnd();
+    // this.pause = true;
+    // let a = document.getElementById("line" + this.currentLine);
+    // a.style.color = "";
+    // this.commandListCounter = this.numCommands;
 
 
-    var command = this.commandList[this.numCommands];
+    // var command = this.commandList[this.numCommands];
 
-    this.returnText = this.descriptions[this.commandListCounter];
+    // this.returnText = this.descriptions[this.commandListCounter];
 
-    this.currentLine = command["lineNumber"];
-    a = document.getElementById("line" + this.currentLine);
-    a.style.color = "#37FF00";
-    this.highlightVariables();
-    this.toggleAnimatePlay();
-  }
+    // this.currentLine = command["lineNumber"];
+    // a = document.getElementById("line" + this.currentLine);
+    // a.style.color = "#37FF00";
+  //   this.highlightVariables();
+  // }
 
-  pauseExecution() {
-    if (this.commandListCounter < this.commandList.length-1) {
-      this.pause = true;
-      // this.toggleAnimatePlay();
-    }
-  }
+  // pauseExecution() {
+  //   if (this.playback.stepCounter < this.playback.numCommands) {
+  //     this.playback.pause = true;
+  //   }
+  // }
 
-  backStep() {
-    let a = document.getElementById("line" + this.currentLine);
-    a.style.color = "";
+  // backStep() {
+  //   this.playback.backStep();
 
-    if (this.commandListCounter > 0) {
-      this.commandListCounter--;
-    }
+  //   this.highlightVariables();
 
-    this.highlightVariables();
-    this.colorLine();
+  // }
 
-  }
+  // forwardStep() {
 
-  forwardStep() {
+    // this.playback.forwardStep();
 
-    let a = document.getElementById("line" + this.currentLine);
-    a.style.color = "";
+    // let a = document.getElementById("line" + this.currentLine);
+    // a.style.color = "";
 
-    if (this.commandListCounter < this.commandList.length-1) {
-      this.commandListCounter++;
-    }
+    // if (this.commandListCounter < this.commandList.length-1) {
+    //   this.commandListCounter++;
+    // }
 
-    this.highlightVariables();
-    this.colorLine();
+    // this.highlightVariables();
+    // this.colorLine();
 
-  }
+  // }
 
-  colorLine(): void {
-    var command = this.commandList[this.commandListCounter];
+  // colorLine(): void {
+  //   var command = this.commandList[this.commandListCounter];
 
-    this.returnText = this.descriptions[this.commandListCounter];
+  //   this.returnText = this.descriptions[this.commandListCounter];
 
-    let a = document.getElementById("line" + command["lineNumber"]);
-    a.style.color = "#37FF00";
-    this.currentLine = command["lineNumber"];
-  }
+  //   let a = document.getElementById("line" + command["lineNumber"]);
+  //   a.style.color = "#37FF00";
+  //   this.currentLine = command["lineNumber"];
+  // }
 
-  async sleep(msec: number) {
-    return new Promise(resolve => setTimeout(resolve, msec));
-  }
+  // async sleep(msec: number) {
+  //   return new Promise(resolve => setTimeout(resolve, msec));
+  // }
 
-  getStepData(): void {
-    for(let command of this.commandList) {
-      this.matrix.push(command["matrix"]);
-      this.row.push(command["row"]);
-      this.col.push(command["col"]);
-    }
-    console.log(this.commandList);
-  }
+  // getStepData(): void {
+  //   for(let command of this.commandList) {
+  //     this.matrix.push(command["matrix"]);
+  //     this.row.push(command["row"]);
+  //     this.col.push(command["col"]);
+  //   }
+  //   console.log(this.commandList);
+  // }
 
-  async highlightVariables(): Promise<void> {
+  // async highlightVariables(): Promise<void> {
 
-    this.clearHighlight();
+  //   this.clearHighlight();
 
-    await this.sleep(1);
+  //   await this.sleep(1);
 
-    var command = this.commandList[this.commandListCounter];
-    let highlightNumber = command["highlight"];
-    let highlightRow = command["row"];
-    let highlightCol = command["col"];
+  //   var command = this.commandList[this.commandListCounter];
+  //   let highlightNumber = command["highlight"];
+  //   let highlightRow = command["row"];
+  //   let highlightCol = command["col"];
 
-    for (let number of highlightNumber) {
-      let a = document.getElementsByClassName("number" + number);
-      for (let i = 0; i < a.length; i++) {
-        a[i].setAttribute("style", "font-weight: bold; color: red;");
-      }
-      this.selectedNumber.push(number);
-    }
+  //   for (let number of highlightNumber) {
+  //     let a = document.getElementsByClassName("number" + number);
+  //     for (let i = 0; i < a.length; i++) {
+  //       a[i].setAttribute("style", "font-weight: bold; color: red;");
+  //     }
+  //     this.selectedNumber.push(number);
+  //   }
 
-    for (let i=0; i<this.numLength; i++) {
-      if(highlightRow[i]) {
-        let className = "r" + i.toString();
-        let a = document.getElementsByClassName(className);
-        for (let i = 0; i < a.length; i++) {
-          a[i].setAttribute("style", "background-color: lightblue;");
-        }
-        this.selectedLine.push(className);
-      }
+  //   for (let i=0; i<this.numLength; i++) {
+  //     if(highlightRow[i]) {
+  //       let className = "r" + i.toString();
+  //       let a = document.getElementsByClassName(className);
+  //       for (let i = 0; i < a.length; i++) {
+  //         a[i].setAttribute("style", "background-color: lightblue;");
+  //       }
+  //       this.selectedLine.push(className);
+  //     }
 
-      if(highlightCol[i]) {
-        let className = "c" + i.toString();
-        let a = document.getElementsByClassName(className);
-        for (let i = 0; i < a.length; i++) {
-          a[i].setAttribute("style", "background-color: lightgreen;");
-        }
-        this.selectedLine.push(className);
-      }
+  //     if(highlightCol[i]) {
+  //       let className = "c" + i.toString();
+  //       let a = document.getElementsByClassName(className);
+  //       for (let i = 0; i < a.length; i++) {
+  //         a[i].setAttribute("style", "background-color: lightgreen;");
+  //       }
+  //       this.selectedLine.push(className);
+  //     }
 
-    }
+  //   }
 
-  }
+  // }
 
-  clearHighlight(): void {
+  // clearHighlight(): void {
 
-    for (let number of this.selectedNumber) {
-      let a = document.getElementsByClassName("number" + number);
-      for (let i = 0; i < a.length; i++) {
-        a[i].setAttribute("style", "font-weight: normal; color: ;");
-      }
-    }
+  //   for (let number of this.selectedNumber) {
+  //     let a = document.getElementsByClassName("number" + number);
+  //     for (let i = 0; i < a.length; i++) {
+  //       a[i].setAttribute("style", "font-weight: normal; color: ;");
+  //     }
+  //   }
 
-    this.selectedNumber = [];
+  //   this.selectedNumber = [];
 
-    for (let line of this.selectedLine) {
-      let a = document.getElementsByClassName(line);
-      for (let i = 0; i < a.length; i++) {
-        a[i].setAttribute("style", "background-color: ;");
-      }
-    }
+  //   for (let line of this.selectedLine) {
+  //     let a = document.getElementsByClassName(line);
+  //     for (let i = 0; i < a.length; i++) {
+  //       a[i].setAttribute("style", "background-color: ;");
+  //     }
+  //   }
 
-    this.selectedLine = [];
+  //   this.selectedLine = [];
 
-  }
+  // }
   
 
 }
