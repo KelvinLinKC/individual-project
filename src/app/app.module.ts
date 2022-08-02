@@ -15,6 +15,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { SimpleCodeComponent } from './algorithm-page/algorithms/simple/simple-code/simple-code.component';
 import { HungarianCodeComponent } from './algorithm-page/algorithms/hungarian/hungarian-code/hungarian-code.component';
+import { CodeDisplayComponent } from './algorithm-page/code-display/code-display.component';
+import { PlaybackControlsComponent } from './algorithm-page/playback-controls/playback-controls.component';
+import { MatrixTableComponent } from './algorithm-page/matrix-table/matrix-table.component';
 
 
 @NgModule({
@@ -23,7 +26,10 @@ import { HungarianCodeComponent } from './algorithm-page/algorithms/hungarian/hu
     AlgorithmPageComponent,
     MatAnimatedIconComponent,
     SimpleCodeComponent,
-    HungarianCodeComponent
+    HungarianCodeComponent,
+    CodeDisplayComponent,
+    PlaybackControlsComponent,
+    MatrixTableComponent
   ],
   imports: [
     BrowserModule,
