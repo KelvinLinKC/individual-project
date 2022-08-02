@@ -13,6 +13,7 @@ export class HungarianService {
   n: number;
   rowCovered: boolean[] = [];
   colCovered: boolean[] = [];
+  numberHighlight: string[];
   results = [];
   commandList = {
     originalMatrix: null,
@@ -52,9 +53,11 @@ export class HungarianService {
     this.results = [];
     this.rowCovered = [];
     this.colCovered = [];
+    this.numberHighlight = [];
     this.n = 0;
     this.originalMatrix = [];
     this.m = [];
+    this.firstloop = true;
     this.commandList = {
       originalMatrix: null,
       results: null,
@@ -67,6 +70,7 @@ export class HungarianService {
       matrix: Object.assign([], this.m.map( function(arr) { return arr.slice(); })),
       row: Object.assign([], this.rowCovered),
       col: Object.assign([], this.colCovered),
+      highlight: Object.assign([], this.numberHighlight),
       lineNumber: step,
       stepVariables: stepVariables
     }
@@ -134,7 +138,13 @@ export class HungarianService {
     let minNumber = [];
 
     for(let i=0; i<this.n; i++) {
-        minNumber.push(this.getMinOfArray(this.m[i]));
+      let number = this.getMinOfArray(this.m[i]);
+      minNumber.push(number);
+      for(let j=0; j<this.n; j++) {
+        if(this.m[i][j] == number) {
+          this.updateHighlightNumber(i,j);
+        }
+      }
     }
 
     // this.commandList.push({2: {"%i%": minNumber}});
@@ -144,6 +154,7 @@ export class HungarianService {
 
     // this.commandList.push({3: {"%i%": minNumber}});
     this.update(3, {"%rowMin%": minNumber});
+    this.clearHighlight();
 
     return 2;
 
@@ -157,7 +168,13 @@ export class HungarianService {
     let transMatrix = this.transpose(this.m);
 
     for(let i=0; i<this.n; i++) {
-        minNumber.push(this.getMinOfArray(transMatrix[i]));
+      let number = this.getMinOfArray(transMatrix[i]);
+      minNumber.push(number);
+      for(let j=0; j<this.n; j++) {
+        if(transMatrix[i][j] == number) {
+          this.updateHighlightNumber(j,i);
+        }
+      }
     }
 
     // this.commandList.push({4: {"%i%": minNumber}});
@@ -167,6 +184,7 @@ export class HungarianService {
 
     // this.commandList.push({5: {"%i%": minNumber}});
     this.update(5, {"%colMin%": minNumber});
+    this.clearHighlight();
 
     return 3;
 
@@ -249,6 +267,14 @@ export class HungarianService {
     
     let min = this.findSmallest(this.m);
 
+    for (let i=0; i<this.n; i++) {
+      for (let j=0; j<this.n; j++) {
+          if (this.rowCovered[i] && this.colCovered[j]) {
+              this.updateHighlightNumber(i,j);
+          }
+      }
+    }
+
     // this.commandList.push({8: {"%i%": min}});
     this.update(8, {"%min%": min});
 
@@ -265,6 +291,7 @@ export class HungarianService {
 
     // this.commandList.push({9: {"%i%": min}});
     this.update(9, {"%min%": min});
+    this.clearHighlight();
 
     return 3;
 
@@ -281,43 +308,44 @@ export class HungarianService {
     this.clearCover();
 
     while (count < this.n) {
-        let transMatrix = this.transpose(mark);
+      let transMatrix = this.transpose(mark);
 
-        for (let i=0; i<this.n; i++) {
-            rowZeroNumbers[i] = this.countZero(mark[i]);
-            colZeroNumbers[i] = this.countZero(transMatrix[i]);
-        }
+      for (let i=0; i<this.n; i++) {
+        rowZeroNumbers[i] = this.countZero(mark[i]);
+        colZeroNumbers[i] = this.countZero(transMatrix[i]);
+      }
 
-        let sumZeroMatrix = this.sumMatrix(rowZeroNumbers, colZeroNumbers);
-        let minZeroNumber = this.maxSize;
+      let sumZeroMatrix = this.sumMatrix(rowZeroNumbers, colZeroNumbers);
+      let minZeroNumber = this.maxSize;
 
-        let row, col: number = -1;
+      let row, col: number = -1;
         
-        for (let i=0; i<this.n; i++) {
-            for(let j=0; j<this.n; j++) {
-                if(mark[i][j] == 1 && !this.rowCovered[i] && !this.colCovered[j]) {
-                    if(sumZeroMatrix[i][j] < minZeroNumber) {
-                        minZeroNumber = sumZeroMatrix[i][j];
-                        row = i;
-                        col = j;
-                    }
-                }
+      for (let i=0; i<this.n; i++) {
+        for(let j=0; j<this.n; j++) {
+          if(mark[i][j] == 1 && !this.rowCovered[i] && !this.colCovered[j]) {
+            if(sumZeroMatrix[i][j] < minZeroNumber) {
+              minZeroNumber = sumZeroMatrix[i][j];
+              row = i;
+              col = j;
             }
+          }
         }
+      }
 
-        if(row >= 0 && col >= 0) {
-            this.rowCovered[row] = true;
-            this.colCovered[col] = true;
-            this.results.push([row, col]);
-            count += 1;
-            for(let i=0; i<this.n; i++) {
-                mark[row][i] = 1;
-                mark[i][col] = 1;
-            }
-        } else {
-            console.log("error");
-            break;
+      if(row >= 0 && col >= 0) {
+        this.rowCovered[row] = true;
+        this.colCovered[col] = true;
+        this.results.push([row, col]);
+        this.updateHighlightNumber(row,col);
+        count += 1;
+        for(let i=0; i<this.n; i++) {
+          mark[row][i] = 1;
+          mark[i][col] = 1;
         }
+      } else {
+        console.log("error");
+        break;
+      }
 
     }
 
@@ -328,6 +356,7 @@ export class HungarianService {
 
     // this.commandList.push({11: {"%i%": result}});
     this.update(11, {"%result%": result});
+    this.clearHighlight();
 
     return 6;
 
@@ -441,16 +470,22 @@ export class HungarianService {
 
   findSmallest(matrix: number[][]): number {
     let min = this.maxSize;
+    let row = -1;
+    let col = -1;
 
     for (let i=0; i<matrix.length; i++) {
         for (let j=0; j<matrix[i].length; j++) {
             if (!this.rowCovered[i] && !this.colCovered[j]) {
                 if (min > this.m[i][j]) {
                     min = this.m[i][j];
+                    row = i;
+                    col = j;
                 }
             }
         }
     }
+
+    this.updateHighlightNumber(row,col);
 
     return min;
 
@@ -497,6 +532,15 @@ export class HungarianService {
     }
 
     return formatted;
+  }
+
+  updateHighlightNumber(row: number, col: number): void {
+    let str = row.toString() + col.toString();
+    this.numberHighlight.push(str);
+  }
+
+  clearHighlight(): void {
+    this.numberHighlight = [];
   }
 
 }

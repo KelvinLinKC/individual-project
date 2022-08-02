@@ -1,0 +1,25 @@
+      <!-- MATRIX TABLE -->
+      <div>
+        <div class="row justify-content-around">
+          <div class="col-0">
+            <p style="font-weight: bold">Monitor matrix</p>
+            <div class="divTable">
+              <div class = "m0 row r{{i}}" *ngFor="let row of this.playback.matrix[this.playback.stepCounter]; let i = index">
+                <div class = "m1 col c{{j}}" *ngFor="let col of row; let j = index">
+                  <div class = "number{{i}}{{j}}"> {{ col }} </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-0">
+            <p style="font-weight: bold">Target matrix</p>
+            <div class="divTable">
+              <div class = "m0 row r{{i}}" *ngFor="let row of this.playback.originalMatrix; let i = index">
+                <div class = "m1 col c{{j}}" *ngFor="let col of row; let j = index">
+                  <div class = "number{{i}}{{j}}"> {{ col }} </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>

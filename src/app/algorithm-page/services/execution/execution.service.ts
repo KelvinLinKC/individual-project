@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { HungarianService } from './hungarian/hungarian.service';
-import { SimpleService } from './simple/simple.service';
+import { HungarianService } from '../../algorithms/hungarian/hungarian.service';
+import { SimpleService } from '../../algorithms/simple/simple.service';
 
 @Injectable({
   providedIn: 'root'

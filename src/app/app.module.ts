@@ -9,17 +9,27 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
-import {MatSliderModule} from '@angular/material/slider';
-import { MatAnimatedIconComponent } from './mat-animated-icon/mat-animated-icon.component';
-import {MatIconModule} from '@angular/material/icon';
-import {MatButtonModule} from '@angular/material/button';
+import { MatSliderModule } from '@angular/material/slider';
+import { MatAnimatedIconComponent } from './algorithm-page/mat-animated-icon/mat-animated-icon.component';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { SimpleCodeComponent } from './algorithm-page/algorithms/simple/simple-code/simple-code.component';
+import { HungarianCodeComponent } from './algorithm-page/algorithms/hungarian/hungarian-code/hungarian-code.component';
+import { CodeDisplayComponent } from './algorithm-page/code-display/code-display.component';
+import { PlaybackControlsComponent } from './algorithm-page/playback-controls/playback-controls.component';
+import { MatrixTableComponent } from './algorithm-page/matrix-table/matrix-table.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     AlgorithmPageComponent,
-    MatAnimatedIconComponent
+    MatAnimatedIconComponent,
+    SimpleCodeComponent,
+    HungarianCodeComponent,
+    CodeDisplayComponent,
+    PlaybackControlsComponent,
+    MatrixTableComponent
   ],
   imports: [
     BrowserModule,
