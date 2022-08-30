@@ -14,7 +14,8 @@ export class HungarianService {
   rowCovered: boolean[] = [];
   colCovered: boolean[] = [];
   numberHighlight: string[];
-  results = [];
+  results:number[][]= [];
+  stable: boolean = false;
   commandList = {
     originalMatrix: null,
     results: null,
@@ -26,7 +27,7 @@ export class HungarianService {
     2: "Find the smallest entry in each row, nRow = [%rowMin%].",
     3: "Subtract nRow = [%rowMin%] in each row from all the other entries in the row.",
     4: "Find the smallest entry in each column, nCol = [%colMin%].",
-    5: "Subtract nCol = [%colMin%] in each row from all the other entries in the column.",
+    5: "Subtract nCol = [%colMin%] in each column from all the other entries in the column.",
     6: "The minimal number of zeroes covered lines l = %line% in row %row% and column %col%.",
     7: "The l = %line% and n = %n%, check entry loop condition l < n",
     8: "The smallest uncovered entry s = %min%.",
@@ -58,6 +59,7 @@ export class HungarianService {
     this.originalMatrix = [];
     this.m = [];
     this.firstloop = true;
+    this.stable = false;
     this.commandList = {
       originalMatrix: null,
       results: null,
@@ -128,6 +130,9 @@ export class HungarianService {
 
     console.log("---- Target Matrix ----");
     console.log(this.formatMatrix(this.originalMatrix));
+
+    this.stable = this.checkStability(this.originalMatrix, this.results);
+    console.log(this.stable);
 
     return this.commandList;
   }
@@ -541,6 +546,62 @@ export class HungarianService {
 
   clearHighlight(): void {
     this.numberHighlight = [];
+  }
+
+  permutator(inputArr: number[]) {
+    let result = [];
+  
+    const permute = (arr, m = []) => {
+      if (arr.length === 0) {
+        result.push(m)
+      } else {
+        for (let i = 0; i < arr.length; i++) {
+          let curr = arr.slice();
+          let next = curr.splice(i, 1);
+          permute(curr.slice(), m.concat(next))
+       }
+     }
+   }
+  
+   permute(inputArr)
+  
+   return result;
+  }
+
+  checkStability(matrix: number[][], results: number[][]): boolean {
+    let stability = true;
+    let minNumber = this.maxSize;
+    let permuteArray = [];
+    let minResult = 0;
+
+    for(let i=0; i<matrix.length; i++) {
+      permuteArray.push(i);
+    }
+
+    let permuteResult = this.permutator(permuteArray);
+
+    for(let array of permuteResult) {
+      let sum = 0;
+      for(let i=0; i<matrix.length; i++) {
+        let col: number = array[i];
+        sum += matrix[i][col];
+      }
+      if(sum < minNumber) {
+        minNumber = sum;
+      }
+    }
+
+    for(let entry of results) {
+      let row = entry[0];
+      let col = entry[1];
+      minResult += this.originalMatrix[row][col];
+    }
+
+    if(minResult != minNumber) {
+      stability = false;
+    }
+
+    return stability;
   }
 
 }

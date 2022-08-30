@@ -34,12 +34,18 @@ export class AlgorithmPageComponent implements OnInit {
     this.playback.resetPlaybackData();
     this.numLength = 3;
     anime({
-      targets: '.playback-block, .code-block',
+      targets: '.playback-block, .restart-button, .matrix-block, .code-block',
       easing: 'easeInOutQuint',
       translateY: [150, 0],
       opacity: [0, 1],
       duration: 800
     })
+  }
+
+  restartAlgorithm() {
+    this.playback.firstRun = true;
+    this.playback.resetPlaybackData();
+    this.numLength = 3;
   }
 
 }

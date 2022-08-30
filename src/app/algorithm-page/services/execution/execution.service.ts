@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HungarianService } from '../../algorithms/hungarian/hungarian.service';
-import { SimpleService } from '../../algorithms/simple/simple.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,13 +10,11 @@ export class ExecutionService {
   commandList = {};
 
   serviceMap = {
-    "simple": this.simpleService,
     "hungarian": this.hunService
   }
 
   // add the services for any new algorithms here
   constructor(
-    public simpleService: SimpleService,
     public hunService: HungarianService
   ) { }
 
@@ -30,46 +27,6 @@ export class ExecutionService {
 
     return commandList;
   }
-
-  // getMonitorMatrixTable(): any[] {
-  //   return this.hunService.matrixSet;
-  // }
-
-  // getOriginalMatrixTable(): any[][] {
-  //   return this.hunService.originalMatrix;
-  // }
-
-  // getResultMatrixTable(): any[][] {
-  //   return this.hunService.results;
-  // }
-
-  // simpleFunction(): Object {
-  //   let commandList = [];
-  //   this.commandList = [];
-  //   commandList.push(1);
-  //   for (let i=1; i<8; i++) {
-  //     console.log(i);
-  //     commandList.push({2: {"%i%": i}});
-  //     commandList.push({3: {"%i%": i}});
-  //     if (i == 5) {
-  //       console.log("this is now 5!");
-  //       commandList.push(4);
-  //     } else {
-  //       commandList.push({5: {"%i%": i}});
-  //     }
-  //   }
-  //   commandList.push(6);
-  //   this.commandList["commands"] = commandList;
-  //   return this.commandList;
-  // }
-
-  // hungarianFunction(min: number, max: number,numLength: number): Object {
-  //   console.log(this);
-  //   console.log(this.commandList);
-  //   this.commandList = this.hunService.hungarian(min, max, numLength);
-  //   this.commandList["descriptions"] = this.generateDescriptions();
-  //   return this.commandList;
-  // }
 
   // --------------------------------------------------------- FUNCTIONS TO GENERATE LINE DESCRIPTIONS
 

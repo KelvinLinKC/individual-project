@@ -5,13 +5,16 @@
       <div class="option-box">
         <p class="title" *ngIf="(this.algorithm.value == '')">Matching Algorithm Animator</p>
 
-        <mat-form-field style="width: 250px" appearance="fill">
+        <mat-form-field style="width: 350px" appearance="fill">
           <mat-label>Choose an Algorithm</mat-label>
           <mat-select id="algorithmDropdown" [formControl]="algorithm" (selectionChange)="changeAlgorithm()">
-            <mat-option value="simple">Simple</mat-option>
-            <mat-option value="hungarian">Hungarian algorithm</mat-option>
+            <mat-option value="hungarian">Hungarian algorithm (minimum-weight matching)</mat-option>
           </mat-select>
         </mat-form-field>
+      </div>
+
+      <div class="restart-button">
+        <button mat-stroked-button (click)="restartAlgorithm()" clickable *ngIf="(this.algorithm.value == 'hungarian')">Restart algorithm</button>
       </div>
 
       <div class="playback-block">

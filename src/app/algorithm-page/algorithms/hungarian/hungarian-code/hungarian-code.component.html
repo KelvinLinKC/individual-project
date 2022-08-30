@@ -1,12 +1,12 @@
 <pre>
-    <code id="line1"> 1:     create a random matrix m with length n;</code>
-    <code id="line2"> 2:     let nRow = smallest number in each row;</code>
+    <code id="line1"> 1:     create an adjacency matrix m with order n;</code>
+    <code id="line2"> 2:     let nRow = the smallest number in each row;</code>
     <code id="line3"> 3:     subtract nRow from all elements in the row;</code>
-    <code id="line4"> 4:     let nCol = smallest number in each column, subtract it from all elements in the column;</code>
-    <code id="line5"> 5:     subtract nCol from all elements in the row;</code>
-    <code id="line6"> 6:     let l = minimum number of vertical and/or horizontal lines which can cover all zeroes;</code>
-    <code id="line7"> 7:           while l smaller than n</code>
-    <code id="line8"> 8:                 let s = smallest uncovered number;</code>
+    <code id="line4"> 4:     let nCol = the smallest number in each column;</code>
+    <code id="line5"> 5:     subtract nCol from all elements in the column;</code>
+    <code id="line6"> 6:     let l = the minimal number of vertical and/or horizontal lines which can cover all zeroes;</code>
+    <code id="line7"> 7:           while l is smaller than n</code>
+    <code id="line8"> 8:                 let s = the smallest uncovered number;</code>
     <code id="line9"> 9:                 subtract s from all uncovered numbers and it to all cross-covered numbers;</code>
     <code id="line10">10:                 l = new vertical and/or horizontal lines which can cover all zeroes;</code>
     <code id="line11">11:     the optimal assignment is found</code>

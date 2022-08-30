@@ -5,7 +5,7 @@ import { PlaybackService } from '../services/playback/playback.service';
 @Component({
   selector: 'playback-controls',
   templateUrl: './playback-controls.component.html',
-  styleUrls: ['./playback-controls.component.css']
+  styleUrls: ['./playback-controls.component.css'],
 })
 export class PlaybackControlsComponent implements OnInit {
 
