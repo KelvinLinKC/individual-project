@@ -14,7 +14,7 @@
       </div>
 
       <div class="restart-button">
-        <button mat-stroked-button (click)="restartAlgorithm()" clickable *ngIf="(this.algorithm.value == 'hungarian')">Restart algorithm</button>
+        <button mat-stroked-button (click)="restartAlgorithm()" [disabled]="!this.playback.pause" *ngIf="(this.algorithm.value == 'hungarian')">Regenerate new random preference</button>
       </div>
 
       <div class="playback-block">

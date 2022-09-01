@@ -60,9 +60,7 @@ export class PlaybackService {
     this.getStepData();
 
     this.numCommands = this.commandList.length-1;
-    console.log(this.algorithmData);
     this.updateCurrentCommand();
-    console.log(this.description);
 
   }
 
@@ -116,20 +114,17 @@ export class PlaybackService {
   }
 
   async play(): Promise<void> {
-    while (this.stepCounter < this.numCommands) {
-
-      if (this.pause) {
-        console.log("Paused at step " + (this.stepCounter) + "!");
-        console.log("Current Line: " + this.currentLine);
-        break;
-      }
+    while (this.stepCounter <= this.numCommands) {
 
       this.colourCurrentLine();
+
+      if (this.pause) {
+        break;
+      }
 
       await this.sleep(this.speed);
 
       if (!this.pause) {
-        // console.log(this.stepCounter + " | " + this.numCommands);
         this.uncolourCurrentLine();
         this.stepCounter++;
         this.updateCurrentCommand();
@@ -161,7 +156,6 @@ export class PlaybackService {
       this.row.push(command["row"]);
       this.col.push(command["col"]);
     }
-    console.log(this.commandList);
   }
 
   async highlightVariables(): Promise<void> {
