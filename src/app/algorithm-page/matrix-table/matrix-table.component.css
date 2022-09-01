@@ -1,13 +1,8 @@
 .divTable
 {
-  /* -webkit-columns: 1px 3;
-  -moz-columns: 1px 3;
-  columns: 1px 3; */
   color: black;
   text-align: center;
   float:left;
-  /* width: 120px; */
-  /* height: 75px; */
   border: 5px solid black;
   margin: 10px;
 }

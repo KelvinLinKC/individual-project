@@ -84,7 +84,6 @@ export class HungarianService {
 
     this.initialise();
 
-    // this.commandList = [];
     this.n = numLength;
     this.originalMatrix = this.randomMatrix(min, max, numLength);
     this.m = this.originalMatrix.map(function(arr) {
@@ -93,22 +92,9 @@ export class HungarianService {
 
     this.commandList["originalMatrix"] = this.originalMatrix;
 
-    // this.commandList.push(1);
     this.update(1);
 
     let step = 1;
-
-    // let steps = {
-    //   1: this.step1(commandList),
-    //   2: this.step2(commandList),
-    //   3: this.step3(commandList),
-    //   4: this.step4(commandList),
-    //   5: this.step5(commandList),
-    //   6: 'Done'
-    // };
-
-    console.log("---- Target Matrix ----");
-    console.log(this.formatMatrix(this.originalMatrix));
 
     while (true) {
       let func = this.steps[step];
@@ -117,29 +103,17 @@ export class HungarianService {
           break;
       }
 
-      console.log("Step" + step);
-
       step = func.apply(this);
-
-      console.log("---- Transition Matrix ----");
-      console.log(this.formatMatrix(this.m));
   
     }
 
     this.commandList["results"] = this.results;
-
-    console.log("---- Target Matrix ----");
-    console.log(this.formatMatrix(this.originalMatrix));
-
     this.stable = this.checkStability(this.originalMatrix, this.results);
-    console.log(this.stable);
 
     return this.commandList;
   }
 
   step1(): number {
-    console.log('Subtract the smallest entry in each row from all the other entries in the row.\n');
-
     let minNumber = [];
 
     for(let i=0; i<this.n; i++) {
@@ -152,13 +126,12 @@ export class HungarianService {
       }
     }
 
-    // this.commandList.push({2: {"%i%": minNumber}});
     this.update(2, {"%rowMin%": minNumber});
 
     this.subStractMinValue(this.m);
 
-    // this.commandList.push({3: {"%i%": minNumber}});
     this.update(3, {"%rowMin%": minNumber});
+
     this.clearHighlight();
 
     return 2;
@@ -166,8 +139,6 @@ export class HungarianService {
   }
 
   step2(): number {
-    console.log('Subtract the smallest entry in each column from all the other entries in the column.\n');
-
     let minNumber = [];
 
     let transMatrix = this.transpose(this.m);
@@ -182,13 +153,12 @@ export class HungarianService {
       }
     }
 
-    // this.commandList.push({4: {"%i%": minNumber}});
     this.update(4, {"%colMin%": minNumber});
 
     this.m = this.transpose(this.subStractMinValue(transMatrix));
 
-    // this.commandList.push({5: {"%i%": minNumber}});
     this.update(5, {"%colMin%": minNumber});
+
     this.clearHighlight();
 
     return 3;
@@ -196,8 +166,6 @@ export class HungarianService {
   }
 
   step3(): number {
-    console.log('Draw lines through the row and columns that have the 0 entries such that the fewest lines possible are drawn.\n');
-
     let count = 0;
     let mark = this.markZero(this.m);
     let rowZeroNumbers = [];
@@ -248,15 +216,12 @@ export class HungarianService {
     }
 
     if(this.firstloop) {
-        // this.commandList.push({6: {"%i%": count, "%j%": rowCoveredLine, "%k%": colCoveredLine}});
         this.update(6, {"%line%": count, "%row%": rowCoveredLine, "%col%": colCoveredLine});
         this.firstloop = false;
     } else {
-        // this.commandList.push({10: {"%i%": count, "%j%": rowCoveredLine, "%k%": colCoveredLine}});
         this.update(10, {"%line%": count, "%row%": rowCoveredLine, "%col%": colCoveredLine});
     }
 
-    // this.commandList.push({7: {"%i%": count, "%j%": this.n}});
     this.update(7, {"%line%": count, "%n%": this.n});
 
     if (count >= this.n) {
@@ -268,8 +233,6 @@ export class HungarianService {
   }
 
   step4(): number {
-    console.log('Find the smallest entry not covered by any line. Subtract this entry from each row that isn’t crossed out, and then add it to each column that is crossed out.\n');
-    
     let min = this.findSmallest(this.m);
 
     for (let i=0; i<this.n; i++) {
@@ -280,7 +243,6 @@ export class HungarianService {
       }
     }
 
-    // this.commandList.push({8: {"%i%": min}});
     this.update(8, {"%min%": min});
 
     for (let i=0; i<this.n; i++) {
@@ -294,8 +256,8 @@ export class HungarianService {
         }
     }
 
-    // this.commandList.push({9: {"%i%": min}});
     this.update(9, {"%min%": min});
+
     this.clearHighlight();
 
     return 3;
@@ -303,8 +265,6 @@ export class HungarianService {
   }
 
   step5(): number {
-    console.log('If there are n lines drawn, an optimal assignment of zeros is possible and the algorithm is finished.\n');
-
     let count = 0;
     let mark = this.markZero(this.m);
     let rowZeroNumbers = [];
@@ -355,12 +315,11 @@ export class HungarianService {
     }
 
     let result = this.formatResult(this.results);
-    console.log(result);
 
     this.clearCover();
-
-    // this.commandList.push({11: {"%i%": result}});
+;
     this.update(11, {"%result%": result});
+
     this.clearHighlight();
 
     return 6;
@@ -493,38 +452,6 @@ export class HungarianService {
     this.updateHighlightNumber(row,col);
 
     return min;
-
-  }
-
-  formatMatrix(matrix: number[][]): string {
-    let columnWidths = [];
-
-    for (let i = 0; i < matrix.length; ++i) {
-        for (let j = 0; j < matrix[i].length; ++j) {
-            let entryWidth = String(matrix[i][j]).length;
-            if (!columnWidths[j] || entryWidth >= columnWidths[j])
-                columnWidths[j] = entryWidth;
-        }
-    }
-
-    let formatted = '';
-
-    for (let i = 0; i < matrix.length; ++i) {
-        for (let j = 0; j < matrix[i].length; ++j) {
-            let s = String(matrix[i][j]);
-            // pad at front with spaces
-            while (s.length < columnWidths[j])
-                s = ' ' + s;
-            formatted += s;
-            // separate columns
-            if (j != matrix[i].length - 1)
-                formatted += ' ';
-        }
-        if (i != matrix[i].length - 1)
-            formatted += '\n';
-    }
-
-    return formatted;
 
   }
 

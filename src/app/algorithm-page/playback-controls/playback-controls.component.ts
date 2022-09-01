@@ -37,9 +37,7 @@ export class PlaybackControlsComponent implements OnInit {
 
   formatLabel(value: number) {
 
-    // pause
     value = 3050 - value;
-    // play? (maybe not cause so many changes to this.timeInBetween value)
 
     if (value >= 1000) {
       return Math.round(value / 1000) + 's';

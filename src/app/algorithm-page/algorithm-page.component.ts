@@ -26,13 +26,11 @@ export class AlgorithmPageComponent implements OnInit {
   }
 
   algorithm = new FormControl('');
-  numLength: number;
 
   changeAlgorithm() {
-    console.log("here");
     this.playback.firstRun = true;
     this.playback.resetPlaybackData();
-    this.numLength = 3;
+
     anime({
       targets: '.playback-block, .restart-button, .matrix-block, .code-block',
       easing: 'easeInOutQuint',
@@ -43,9 +41,10 @@ export class AlgorithmPageComponent implements OnInit {
   }
 
   restartAlgorithm() {
-    this.playback.firstRun = true;
+    var command = this.playback.commandList[this.playback.previousStepCounter];
+    let a = document.getElementById("line" + command["lineNumber"]);
+    a.style.color = "";
     this.playback.resetPlaybackData();
-    this.numLength = 3;
   }
 
 }

@@ -17,8 +17,6 @@ export class MatAnimatedIconComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    // console.log(this.colorStart);
-    // console.log(this.colorEnd);
   }
 
   toggle() {
