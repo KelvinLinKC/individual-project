@@ -116,7 +116,9 @@ export class PlaybackService {
   }
 
   async play(): Promise<void> {
-    while (this.stepCounter < this.numCommands) {
+    while (this.stepCounter <= this.numCommands) {
+
+      this.colourCurrentLine();
 
       if (this.pause) {
         console.log("Paused at step " + (this.stepCounter) + "!");
@@ -124,12 +126,10 @@ export class PlaybackService {
         break;
       }
 
-      this.colourCurrentLine();
-
       await this.sleep(this.speed);
 
       if (!this.pause) {
-        // console.log(this.stepCounter + " | " + this.numCommands);
+        console.log(this.stepCounter + " | " + this.numCommands);
         this.uncolourCurrentLine();
         this.stepCounter++;
         this.updateCurrentCommand();
